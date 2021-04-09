@@ -472,7 +472,8 @@ defmodule App do
     def changePass(np) do
         session = Database.selectAllContent("Session")
         if (session != [""] && session != :error_db && session != :error_no_db) do
-            if (np != "") do
+            lnp = String.length(np)
+            if (np != "" && lnp >= 4 && lnp <= 15) do
                 msg("Trying to save changes...")
                 l = Database.selectRow(["#{session}"], "Users")
                 if(l != [""] && l != :error_user_not_found && l != :error_no_db) do
@@ -494,8 +495,13 @@ defmodule App do
                     checkErrors(:error_db)
                     :error_db
                 else
-                    checkErrors(:error_input_data_empty)
-                    :error_input_data_empty
+                    if(lnp < 4 || lnp > 15) do
+                        checkErrors(:error_pass_length)
+                        :error_pass_length
+                    else
+                        checkErrors(:error_input_data_empty)
+                        :error_input_data_empty
+                    end
                 end
             end
         else
